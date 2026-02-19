@@ -24,6 +24,7 @@ jobs:
           pip install pyinstaller
 
       - name: Copy branding assets
+      shell: cmd
         run: |
           copy MEDEGYM_app\config.json .
           if exist MEDEGYM_app\logo.png copy MEDEGYM_app\logo.png .
