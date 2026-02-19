@@ -36,13 +36,20 @@ jobs:
       - name: Build EXE with PyInstaller
         shell: pwsh
         run: |
-          $logoArg = ""
-          if (Test-Path "MEDEGYM_app/logo.png") { $logoArg = '--add-data "MEDEGYM_app/logo.png;."' }
-          pyinstaller --clean --noconfirm --noconsole --onefile `
-            --name MEDEGYM_Control `
-            --add-data "MEDEGYM_app/config.json;." `
-            $logoArg `
-            MEDEGYM_app/app.py
+        if: (Test-Path "MEDEGYM_app/logo.png") {
+      pyinstaller --clean --noconfirm --noconsole --onefile `
+        --name MEDEGYM_Control `
+        --add-data "MEDEGYM_app/config.json;." `
+        --add-data "MEDEGYM_app/logo.png;." `
+        MEDEGYM_app/app.py 
+        
+}
+    else {
+      pyinstaller --clean --noconfirm --noconsole --onefile `
+        --name MEDEGYM_Control `
+        --add-data "MEDEGYM_app/config.json;." `
+        MEDEGYM_app/app.py
+    }
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
