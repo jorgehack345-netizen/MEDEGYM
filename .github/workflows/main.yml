@@ -23,11 +23,10 @@ jobs:
           pip install -r MEDEGYM_app/requirements.txt
           pip install pyinstaller
 
-      - name: Copy branding assets
-      shell: cmd
+      - name: Copy branding asset
         run: |
-          copy MEDEGYM_app\config.json .
-          if exist MEDEGYM_app\logo.png copy MEDEGYM_app\logo.png .
+          Copy-Item "MEDEGYM_app/config.json" .
+          if (Test-Path "MEDEGYM_app/logo.png") { Copy-Item "MEDEGYM_app/logo.png" . }
 
       - name: Build EXE with PyInstaller
         run: |
