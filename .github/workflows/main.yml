@@ -1,3 +1,4 @@
+
 name: Build MEDEGYM EXE
 
 on:
@@ -8,6 +9,7 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,18 +25,24 @@ jobs:
           pip install -r MEDEGYM_app/requirements.txt
           pip install pyinstaller
 
-      - name: Copy branding asset
+      # (Opcional) Ver qué hay en el repo para depurar si falla
+      - name: Show tree
+        shell: pwsh
         run: |
-          Copy-Item "MEDEGYM_app/config.json" .
-          if (Test-Path "MEDEGYM_app/logo.png") { Copy-Item "MEDEGYM_app/logo.png" . }
+          Write-Host "Workspace: $pwd"
+          Get-ChildItem -Recurse -Depth 2
 
+      # 💡 Sin copias: PyInstaller toma los assets desde MEDEGYM_app directamente.
       - name: Build EXE with PyInstaller
+        shell: pwsh
         run: |
-          pyinstaller --clean --noconfirm --noconsole --onefile \
-            --name MEDEGYM_Control \
-            --add-data "config.json;." \
-            --add-data "logo.png;." \
-            MEDEGYM_app\app.py
+          $logoArg = ""
+          if (Test-Path "MEDEGYM_app/logo.png") { $logoArg = '--add-data "MEDEGYM_app/logo.png;."' }
+          pyinstaller --clean --noconfirm --noconsole --onefile `
+            --name MEDEGYM_Control `
+            --add-data "MEDEGYM_app/config.json;." `
+            $logoArg `
+            MEDEGYM_app/app.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
